@@ -31,7 +31,7 @@ const UserSchema=mongoose.Schema({
     }],
     profile:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"Profile"
+        ref:"UserProfile"
     },
     courseProgress:[{
         type:mongoose.Schema.Types.ObjectId,
