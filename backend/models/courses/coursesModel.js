@@ -4,18 +4,22 @@ const coursesSchema = new mongoose.Schema({
     coursesName: {
         type: String,
         require: true,
+        trim: true
     },
     courseDescription:{
         type: String,
         require: true,
+        trim: true
     },
     instructor:{
         type:mongoose.Schema.Types.ObjectId,
-        ref:"User"
+        ref:"User",
+        trim: true
     },
     whatYouWillLearn:{
         type: String,
-        require: true
+        require: true,
+        trim: true
     },
     courseContent:{
         type: mongoose.Schema.Types.ObjectId,

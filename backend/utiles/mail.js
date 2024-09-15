@@ -1,7 +1,7 @@
 const nodemailer=require('nodemailer');
 require('dotenv').config();
 
-exports.sendMail=async (receiverMail,title,body)=>{ 
+const sendMail=async (receiverMail,title,body)=>{ 
    try {
     const transporter={
         host:process.env.GMAIL_HOST,
@@ -21,7 +21,7 @@ exports.sendMail=async (receiverMail,title,body)=>{
         subject:title,
         text:body
     }
-    let info=mail_Transport.sendMail(mailOptions);
+    let info= await mail_Transport.sendMail(mailOptions);
     console.log(info);
 
     return info;
@@ -30,3 +30,5 @@ exports.sendMail=async (receiverMail,title,body)=>{
       throw error;
    }
 }
+
+module.exports = sendMail;
