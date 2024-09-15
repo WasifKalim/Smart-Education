@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt")
 const User = require("../../models/user/userModel")
 const jwt = require("jsonwebtoken");
-const { sendMail } = require("../../utiles/mail");
+const mailSender = require("../../utiles/mail");
 const otpGenerator=require('otp-generator');
 const OTP = require("../../models/OTP");
 const Profile = require("../../models/Profile");
@@ -165,7 +165,8 @@ exports.userLogin = async(req, res) => {
             const payload = {
                 email: user.email,
                 id: user._id,
-                name: user.name
+                name: user.name,
+                accountType:user.accountType
             }
 
             const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "2h"} );
@@ -221,6 +222,9 @@ exports.changePassword = async(req, res)=>{
                 message: "Failed to change password",
             })
         }
+
+        //sending change password mail
+        await mailSender(email,"Changing password","Password changed successfully ..")
         return res.status(200).json({
             success: true,
             message: "Password Updated Successfully"
