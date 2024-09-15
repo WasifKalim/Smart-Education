@@ -31,11 +31,12 @@ exports.userSignup = async(req, res) =>{
         //const otp = Math.floor(100000 + Math.random() * 900000);
         
         //sending verification mail
-         // sendMail('rijusk700@gmail.com',"",1234);
-        
-         let response = await userData.save();
+          //sendMail('rijusk700@gmail.com',"OTP verification","Your verification OTP is : ");
+         
+         
+          let response = await userData.save();
 
-        if(1){
+        if(response){
             return res.status(200).json({
                 success:true,
                 data: response.data,

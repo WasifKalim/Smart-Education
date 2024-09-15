@@ -1,12 +1,8 @@
 const nodemailer=require('nodemailer');
 require('dotenv').config();
 
-exports.sendMail=(receiverMail,mailSubject,otp)=>{ 
-    //console.log(process.env.HOST_USER_EMAIL ,process.env.HOST_USER_PASSWORD);
-    
-    if(mailSubject!=="" && otp){
-        mailSubject='Smart-Education account OTP verification mail';
-    }
+exports.sendMail=async (receiverMail,title,body)=>{ 
+   try {
     const transporter={
         host:process.env.GMAIL_HOST,
         port:process.env.GMAIL_PORT,
@@ -22,15 +18,15 @@ exports.sendMail=(receiverMail,mailSubject,otp)=>{
     let mailOptions={
         from:`Smart Education  ${process.env.GMAIL_HOST}`,
         to:`${receiverMail}`,
-        subject:`${mailSubject}`,
-        text:`Your account verification otp is : ${otp}`
+        subject:title,
+        text:body
     }
-    mail_Transport.sendMail(mailOptions,(error,info)=>{
-        if(error){
-            console.log(error);
-            return 'Failed to send mail !'
-        }
-        return 'Mail successfully send .'
-        
-    })
+    let info=mail_Transport.sendMail(mailOptions);
+    console.log(info);
+
+    return info;
+   } catch (error) {
+      console.log(`Error in sending mail ${error}`);
+      throw error;
+   }
 }

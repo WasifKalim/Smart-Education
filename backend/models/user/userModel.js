@@ -1,13 +1,20 @@
 const mongoose=require('mongoose');
 
 const UserSchema=mongoose.Schema({
-    name:{
+    firstName:{
         type:String,
-        require:true
+        require:true,
+        trim:true
+    },
+    lastName:{
+        type:String,
+        require:true,
+        trim:true
     },
     email:{
         type:String,
-        require:true
+        require:true,
+        trim:true
     },
     password:{
         type:String,
@@ -15,6 +22,7 @@ const UserSchema=mongoose.Schema({
     },
     accountType:{
         type:String,
+        enum:["Admin","Student","Instructor"],
         require:true
     },
     active:{
