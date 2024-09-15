@@ -11,10 +11,14 @@ require("dotenv").config();
 const dbConnect = require("./config/db");
 dbConnect();
 
+// Json parser
+app.use(express.json());
+const cookie = require("cookie-parser");
+app.use(cookie())
 
 // Routes Mapping
-app.use('/courses/api', courseRoute);
-app.user('/user/api',userRoute);
+app.use('/smartedu/api/courses', courseRoute);
+app.use('/smartedu/api/user',userRoute);
 
 
 // Server Connect
