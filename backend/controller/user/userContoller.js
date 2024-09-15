@@ -6,7 +6,7 @@ require("dotenv").config();
 
 exports.userSignup = async(req, res) =>{
     try{
-        const {name, email, password, accountType} = req.body;
+        const {firstName, lastName, otp, email, password, accountType} = req.body;
 
         // Validate
         const user = await User.findOne({email});
