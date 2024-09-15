@@ -2,40 +2,124 @@ const bcrypt = require("bcrypt")
 const User = require("../../models/user/userModel")
 const jwt = require("jsonwebtoken");
 const { sendMail } = require("../../utiles/mail");
+const otpGenerator=require('otp-generator');
+const OTP = require("../../models/OTP");
+const Profile = require("../../models/Profile");
 require("dotenv").config();
+
+//Send otp
+exports.sendOtp=async(req,res)=>{
+    try {
+         const {email}=req.body;
+
+         let user=await User.findOne({email});
+         if(user)
+         {
+            return res.status(401).json({
+                success:true,
+                message: "Email already registered"
+            })
+         }
+
+         let otp=otpGenerator.generate(6,{
+            lowerCaseAlphabets:false,
+            upperCaseAlphabets:false,
+            specialChars:false
+         });
+
+         //check otp is present or not
+         let isPresent=await OTP.findOne({otp:otp});
+
+         while(isPresent)
+         {
+            otp=otpGenerator.generate(6,{
+                lowerCaseAlphabets:false,
+                upperCaseAlphabets:false,
+                specialChars:false
+             });
+             isPresent=await OTP.findOne({otp:otp});
+         }
+
+         let response=await OTP.create({
+            email,
+            otp
+         });
+
+         if(!response)
+         {
+            return res.status(400).json({
+                success: false,
+                message: "Failed to save otp into database"
+            }) 
+         }
+         return res.status(200).json({
+            success: true,
+            message: "OTP added into database successfully."
+        })
+
+    } catch (e) {
+        console.log(e);
+        return res.status(500).json({
+            success:false,
+            error:e,
+            message: "Server Error at sending mail"
+        })
+    }
+}
+
+
+
 
 exports.userSignup = async(req, res) =>{
     try{
         const {firstName, lastName, otp, email, password, accountType} = req.body;
 
         // Validate
+        if(!firstName || !lastName  || !otp || !email || !password || !accountType ){
+            return res.status(403).json({
+                success: false,
+                message: "Please fill all the details properly!"
+            })
+        }
+
         const user = await User.findOne({email});
 
         if(user){
             return res.status(200).json({
-                success: false,
+                success: true,
                 message: "Email already registered"
             })
         }
+
+
+        ///Verify otp 
+        let isOtpMatched=await OTP.findOne({email}).sort({createdAt:-1}).limit(1);
+        if(!isOtpMatched){
+            return res.status(400).json({
+                success: false,
+                message: "Invalid otp!"
+            })
+        }
         const hashPassword = await bcrypt.hash(password, 10);
+        const profile=await Profile.create({
+            gender:null,
+            dateOfBirth:null,
+            contactNumber:null,
+            about:null
+        });
 
-        let userData = new User ({
-            name,
-            email,
-            password: hashPassword,
-            accountType,
-        })
-
-
-        // create otp
-        //const otp = Math.floor(100000 + Math.random() * 900000);
-        
-        //sending verification mail
-          //sendMail('rijusk700@gmail.com',"OTP verification","Your verification OTP is : ");
-         
-         
-          let response = await userData.save();
-
+        //create avatar according to your name:
+        let imageUrl=`https://api.dicebear.com/5.x/initials/svg?seed=${firstName} ${lastName}`;
+     let response=await User.create({
+        firstName,
+        lastName,
+        email,
+        password:hashPassword,
+        accountType,
+        additionalDetails:profile._id,
+        image:imageUrl
+     });
+     
         if(response){
             return res.status(200).json({
                 success:true,
