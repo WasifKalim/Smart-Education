@@ -1,18 +1,19 @@
 const bcrypt = require("bcrypt")
 const User = require("../../models/user/userModel")
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
+const { sendMail } = require("../../utiles/mail");
 require("dotenv").config();
 
 exports.userSignup = async(req, res) =>{
     try{
-        const {name, email, password, accountType, active, approve} = req.body;
+        const {name, email, password, accountType} = req.body;
 
         // Validate
         const user = await User.findOne({email});
 
         if(user){
-            return res.status(400).json({
-                success: true,
+            return res.status(200).json({
+                success: false,
                 message: "Email already registered"
             })
         }
@@ -23,13 +24,18 @@ exports.userSignup = async(req, res) =>{
             email,
             password: hashPassword,
             accountType,
-            active,
-            approve
         })
 
-        let response = await userData.save();
 
-        if(response){
+        // create otp
+        //const otp = Math.floor(100000 + Math.random() * 900000);
+        
+        //sending verification mail
+         // sendMail('rijusk700@gmail.com',"",1234);
+        
+         let response = await userData.save();
+
+        if(1){
             return res.status(200).json({
                 success:true,
                 data: response.data,
@@ -38,7 +44,7 @@ exports.userSignup = async(req, res) =>{
         }
 
         return res.status(400).json({
-            success: true,
+            success: false,
             message: "Failed to create account"
         })
     }
@@ -73,7 +79,7 @@ exports.userLogin = async(req, res) => {
         if(passwordMatched){
             const payload = {
                 email: user.email,
-                id: user.id,
+                id: user._id,
                 name: user.name
             }
 
@@ -99,7 +105,7 @@ exports.userLogin = async(req, res) => {
     }
     catch(e){
         console.log(e);
-        return res.status(400).json({
+        return res.status(500).json({
             success: false,
             message: "Server Error",
             error: e
