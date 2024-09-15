@@ -62,7 +62,7 @@ exports.sendOtp=async(req,res)=>{
         return res.status(500).json({
             success:false,
             error:e,
-            message: "Server Error at sending mail"
+            message: "Server Error at OTP mail"
         })
     }
 }
@@ -138,7 +138,7 @@ exports.userSignup = async(req, res) =>{
         return res.status(500).json({
             success:false,
             error:e,
-            message: "Server Error"
+            message: "Server Error in SignUp"
         })
     }
 }
@@ -192,8 +192,45 @@ exports.userLogin = async(req, res) => {
         console.log(e);
         return res.status(500).json({
             success: false,
-            message: "Server Error",
+            message: "Server Error in login",
             error: e
+        })
+    }
+}
+
+// ChangePassword Controller
+exports.changePassword = async(req, res)=>{
+    try{
+        const{email, currentPassword, newPassword} = req.body;
+
+        const isEmail = await User.findOne({email});
+        let checkPassword = await bcrypt.compare(currentPassword, isEmail.password);
+        if(!checkPassword){
+            return res.status(400).json({
+                success: false,
+                message: "Incorrect Current Password"
+            })
+        }
+
+        let hashPassword = await bcrypt.hash(newPassword, 10);
+
+        let result = await User.findOneAndUpdate({email},{ password: hashPassword});
+        if(!result){
+            return res.status(400).json({
+                success: false,
+                message: "Failed to change password",
+            })
+        }
+        return res.status(200).json({
+            success: true,
+            message: "Password Updated Successfully"
+        })
+    }
+    catch(e){
+        console.log(e);
+        return res.status(500).json({
+            success: false,
+            message: "Server Error in ChangePassword",
         })
     }
 }
