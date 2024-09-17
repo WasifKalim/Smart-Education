@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
-
+const cookie = require("cookie-parser");
+const cloudianryConnect = require("./config/cloudinary");
 
 // All import route 
 const courseRoute = require('./routes/coursesRoute');
@@ -10,10 +11,11 @@ const userRoute = require("./routes/userRoute");
 require("dotenv").config();
 const dbConnect = require("./config/db");
 dbConnect();
-
+//Cloudinary connect
+cloudianryConnect();
 // Json parser
 app.use(express.json());
-const cookie = require("cookie-parser");
+
 app.use(cookie())
 
 // Routes Mapping
