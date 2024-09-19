@@ -238,3 +238,35 @@ exports.changePassword = async(req, res)=>{
         })
     }
 }
+
+exports.getUserDetails = async(req, res) => {
+    try{
+        const userId = req.user.id;
+
+        let userDetails = await User.findById(userId);
+        
+        if(!userDetails){
+            return res.status(404).json({
+                success: false,
+                message: "User Not Found",
+            })
+        }
+
+        let profileDetails = await Profile.findById(userDetails.additionalDetails)
+        
+        userDetails.profileDetails = profileDetails;
+
+        return res.status(200).json({
+            success: true,
+            message: "User Not Found",
+        })
+
+    }
+    catch(e){
+        console.log(e);
+        return res.status(500).json({
+            success: false,
+            message: "Server Error in UserDetails",
+        })
+    }
+}
