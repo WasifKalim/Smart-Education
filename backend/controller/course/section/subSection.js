@@ -1,11 +1,12 @@
 const SubSection = require("../../../models/SubSection");
+const Section = require("../../../models/Section");
 
 exports.courseSubSection=async(req,res)=>{
     try{
         const { sectionId, title, description } = req.body;
         const video = req.files.video;
 
-
+qqq
         // Check if all necessary fields are provided
         if(!sectionId || !title || !description || !video){
             res.status(404).json({
@@ -55,7 +56,7 @@ exports.deleteSubSection = async(req, res) => {
             {_id: sectionId},
             {
                 $pull: {
-                    sunSection: SubSectionId
+                    subSection: SubSectionId
                 }
             }
         )
