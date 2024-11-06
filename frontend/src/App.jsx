@@ -1,16 +1,21 @@
-import { useState } from 'react'
-import './App.css'
+import { useState } from "react";
+import "./App.css";
+
+import Navbar from "./components/common/Navbar";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
     <>
-      <div className="bg-richblack-700 text-3xl font-bold text-blue-500">
-      Tailwind CSS is working!
+    <div className="bg-richblack-900 min-h-screen">
+
+      <div>
+          <Navbar />
+      </div>
     </div>
     </>
-  )
+  );
 }
 
-export default App
+export default App;
